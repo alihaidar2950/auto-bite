@@ -1,9 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'https://gcscelrcmmztobladawd.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdjc2NlbHJjbW16dG9ibGFkYXdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1NTM0NjAsImV4cCI6MjAyOTEyOTQ2MH0.8QJQJQJQJQJQJQJQJQJQJQJQJQJQJQJQJQJQJQJQJQ'
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  throw new Error('Missing Supabase environment variables')
+}
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 async function listTables() {
   const { data, error } = await supabase

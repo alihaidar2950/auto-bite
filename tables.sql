@@ -414,3 +414,28 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 RESET ALL;
+
+CREATE TABLE IF NOT EXISTS "public"."profiles" (
+  "id" uuid NOT NULL REFERENCES auth.users ON DELETE CASCADE,
+  "username" text,
+  "full_name" text,
+  "avatar_url" text,
+  "website" text,
+  "updated_at" timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+  CONSTRAINT "profiles_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "profiles_username_key" UNIQUE ("username")
+);
+
+ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public profiles are viewable by everyone"
+  ON "public"."profiles" FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can insert their own profile"
+  ON "public"."profiles" FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Users can update their own profile"
+  ON "public"."profiles" FOR UPDATE
+  USING (auth.uid() = id);
